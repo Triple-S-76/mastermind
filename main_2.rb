@@ -3,7 +3,8 @@ class MasterMind
   def initialize
     # @game = SetupGame.new
     # @game.game_type == 'maker' ? CodeMaker.new : CodeBreaker.new
-    CodeBreaker.new
+    # CodeBreaker.new
+    CodeMaker.new
   end
 end
 
@@ -79,7 +80,57 @@ end
 # Player is the Code Maker
 class CodeMaker
   def initialize
-    p 123
+    code = create_secret_code
+    break_code_bruteforce(code)
+  end
+
+  private
+
+  def break_code_bruteforce(code)
+    round = 0
+    broken = false
+    until broken == true
+      guess = ''
+      round += 1
+      4.times {guess << rand(1..6).to_s }
+      broken = true if code == guess
+    end
+    puts "Your code of #{code} was broken in #{round} tries using bruteforce!"
+  end
+
+  def empty_lines(number)
+    number.times { puts }
+  end
+
+  def create_secret_code
+    valid = false
+    until valid == true
+      puts 'As the Code Maker you need to choose a 4 digit secret code using numbers 1 - 6 only!'
+      puts 'Please make your selection now.'
+      empty_lines(1)
+      code = gets.chomp
+      empty_lines(1)
+      valid = validate_code(code)
+    end
+    code
+  end
+
+  def validate_code(code)
+    return invalid_code(code) if code.length != 4
+
+    code_array_integers = code.split('').map(&:to_i)
+    code_array_integers.each do |num|
+      return invalid_code(code) unless (1..6).include?(num)
+    end
+
+    true
+  end
+
+  def invalid_code(code)
+    puts "#{code} is not a valid code."
+    puts 'Please try again.'
+    empty_lines(1)
+    false
   end
 end
 
